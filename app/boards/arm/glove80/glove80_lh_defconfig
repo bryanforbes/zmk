@@ -53,6 +53,9 @@ CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
 # Enable RGB underglow
 CONFIG_ZMK_RGB_UNDERGLOW=y
 
+# disable EXT_POWER until underglow gets turned on
+CONFIG_ZMK_EXT_POWER_START=n
+
 CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER=y
 CONFIG_ZMK_RGB_UNDERGLOW_ON_START=n
 CONFIG_ZMK_RGB_UNDERGLOW_BRT_STEP=4
@@ -80,6 +83,10 @@ CONFIG_ZMK_BACKLIGHT_AUTO_OFF_USB=y
 # operating systems, most notably macOS. Use the more basic single-byte usage
 # space.
 CONFIG_ZMK_HID_CONSUMER_REPORT_USAGES_BASIC=y
+
+# Enable USB boot protocol support
+CONFIG_ZMK_USB_BOOT=y
+CONFIG_ZMK_HID_INDICATORS=y
 
 # Turn on debugging to disable optimization. Debug messages can result in larger
 # stacks, so enable stack protection and particularly a larger BLE peripheral stack.
