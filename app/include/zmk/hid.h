@@ -73,6 +73,20 @@ static const uint8_t zmk_hid_report_desc[] = {
     HID_REPORT_COUNT(0x01),
     HID_INPUT(ZMK_HID_MAIN_VAL_CONST | ZMK_HID_MAIN_VAL_VAR | ZMK_HID_MAIN_VAL_ABS),
 
+    HID_USAGE_PAGE(HID_USAGE_LED),
+    HID_USAGE_MIN8(HID_USAGE_LED_NUM_LOCK),
+    HID_USAGE_MAX8(HID_USAGE_LED_KANA),
+    HID_REPORT_SIZE(0x01),
+    HID_REPORT_COUNT(0x05),
+    /* OUTPUT (Data,Var,Abs) */
+    HID_OUTPUT(0x02),
+
+    HID_USAGE_PAGE(HID_USAGE_LED),
+    HID_REPORT_SIZE(0x03),
+    HID_REPORT_COUNT(0x01),
+    /* OUTPUT (Cnst,Var,Abs) */
+    HID_OUTPUT(0x03),
+
     HID_USAGE_PAGE(HID_USAGE_KEY),
 
 #if IS_ENABLED(CONFIG_ZMK_HID_REPORT_TYPE_NKRO)
@@ -187,6 +201,15 @@ struct zmk_hid_keyboard_report_body {
 struct zmk_hid_keyboard_report {
     uint8_t report_id;
     struct zmk_hid_keyboard_report_body body;
+} __packed;
+
+struct zmk_hid_led_report_body {
+    uint8_t leds;
+} __packed;
+
+struct zmk_hid_led_report {
+    uint8_t report_id;
+    struct zmk_hid_led_report_body body;
 } __packed;
 
 struct zmk_hid_consumer_report_body {
