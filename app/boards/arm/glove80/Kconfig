@@ -6,3 +6,13 @@ config BOARD_ENABLE_DCDC
     select SOC_DCDC_NRF52X
     default y
     depends on (BOARD_GLOVE80_LH || BOARD_GLOVE80_RH)
+
+config BT_DEVICE_NAME_APPEND_SN
+    bool "Append serial number to BT device name"
+    default n
+    depends on BT_DEVICE_NAME_DYNAMIC
+
+config BT_DEVICE_NAME_SN_BYTES
+    int "Number of bytes of serial number to append to the BT device name"
+    default 4
+    depends on BT_DEVICE_NAME_APPEND_SN
