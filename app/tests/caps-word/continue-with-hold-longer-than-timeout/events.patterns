@@ -1,0 +1,4 @@
+s/.*hid_listener_keycode_//p
+s/.*hid_implicit_modifiers_//p
+s/.*caps_word_keycode_state_changed_listener/state_changed/p
+s/.*caps_word_timeout_handler/timeout/p

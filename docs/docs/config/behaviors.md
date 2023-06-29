@@ -29,14 +29,17 @@ Definition file: [zmk/app/dts/bindings/behaviors/zmk,behavior-caps-word.yaml](ht
 
 Applies to: `compatible = "zmk,behavior-caps-word"`
 
-| Property         | Type   | Description                                                        | Default                         |
-| ---------------- | ------ | ------------------------------------------------------------------ | ------------------------------- |
-| `label`          | string | Unique label for the node                                          |                                 |
-| `#binding-cells` | int    | Must be `<0>`                                                      |                                 |
-| `continue-list`  | array  | List of [key codes](/docs/codes) which do not deactivate caps lock | `<UNDERSCORE BACKSPACE DELETE>` |
-| `mods`           | int    | A bit field of modifiers to apply                                  | `<MOD_LSFT>`                    |
+| Property          | Type   | Description                                                                             | Default                         |
+| ----------------- | ------ | --------------------------------------------------------------------------------------- | ------------------------------- |
+| `label`           | string | Unique label for the node                                                               |                                 |
+| `#binding-cells`  | int    | Must be `<0>`                                                                           |                                 |
+| `continue-list`   | array  | List of [key codes](/docs/codes) which do not deactivate caps word                      | `<UNDERSCORE BACKSPACE DELETE>` |
+| `shift-list`      | array  | List of [key codes](/docs/codes) which should have `mods` applied                       | `<MINUS>`                       |
+| `no-default-keys` | bool   | Do not automatically include alphanumeric keys in `continue-list` and `shift-list`      | false                           |
+| `mods`            | int    | A bit field of modifiers to apply                                                       | `<MOD_LSFT>`                    |
+| `idle-timeout-ms` | int    | Caps word turns off if no key is pressed for this time in milliseconds. 0 = no timeout. | 5000                            |
 
-`continue-list` is treated as if it always includes alphanumeric characters (A-Z, 0-9).
+`continue-list` is treated as if it always includes A-Z and 0-9, and `shift-list` is treated as if it always includes A-Z unless `no-default-keys` is set.
 
 See [dt-bindings/zmk/modifiers.h](https://github.com/zmkfirmware/zmk/blob/main/app/include/dt-bindings/zmk/modifiers.h) for a list of modifiers.
 
