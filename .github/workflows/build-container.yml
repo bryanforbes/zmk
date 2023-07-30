@@ -2,17 +2,16 @@ name: Build Compiler Service Container
 
 on:
   push:
-    branches:
-      - "main"
     tags:
       - "*"
-  pull_request:
+  pull_request_target:
     branches:
       - main
 
 jobs:
   build:
-    if: github.repository == 'moergo-sc/zmk'
+    # This job must never be run on a PR from outside the same repository
+    if: github.repository == 'moergo-sc/zmk' && (github.event.pull_request == null || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
@@ -22,9 +21,14 @@ jobs:
       ECR_REPOSITORY: zmk-builder-lambda
       VERSIONS_BUCKET: glove80firmwarepipelines-compilerversionsbucket44-zubaquiyjdam
       UPDATE_COMPILER_VERSIONS_FUNCTION: arn:aws:lambda:us-east-1:431227615537:function:Glove80FirmwarePipelineSt-UpdateCompilerVersions2A-CNxPOHb4VSuV
-      REVISION_TAG: ${{ github.sha }}
+      REVISION_TAG: ${{ github.event.pull_request && github.event.pull_request.head.sha || github.sha  }}
+      PR_NUMBER: ${{ github.event.number }}
     steps:
       - uses: actions/checkout@v2.4.0
+        with:
+          repository: moergo-sc/zmk
+          ref: ${{ github.event.pull_request && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -33,16 +37,12 @@ jobs:
       - name: Extract container name from branch name
         shell: bash
         run: |
-          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
-            tag="branch.main"
-          elif [ "$GITHUB_HEAD_REF" ]; then
-            pr=${GITHUB_REF#refs/pull/}
-            pr=${pr%/merge}
-            tag="pr${pr}.${GITHUB_HEAD_REF}"
+          if [ "$GITHUB_HEAD_REF" ]; then
+            tag="pr${PR_NUMBER}.${GITHUB_HEAD_REF}"
           elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             tag="${GITHUB_REF#refs/tags/}"
           else
-            echo "Not a release branch or tag" >&2
+            echo "Not a pull request or release tag" >&2
             exit 1
           fi
           # Replace / with . in container tag names
@@ -76,12 +76,13 @@ jobs:
         run: |
           digest="$(docker inspect --format='{{index .RepoDigests 0}}' $REGISTRY/$ECR_REPOSITORY:$REVISION_TAG)"
           digest="${digest##*@}"
+          api_version="$(cat lambda/api_version.txt)"
           jq -n '$ARGS.named' \
             --arg name     "$CONTAINER_NAME" \
             --arg revision "$REVISION_TAG" \
             --arg branch   "$GITHUB_REF" \
             --arg digest   "$digest" \
-            --arg api_version "2" \
+            --arg api_version "$api_version" \
             > "/tmp/$CONTAINER_NAME.json"
       - name: Upload image metadata file to versions bucket
         run: aws s3 cp "/tmp/$CONTAINER_NAME.json" "s3://$VERSIONS_BUCKET/images/$CONTAINER_NAME.json"
