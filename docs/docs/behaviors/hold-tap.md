@@ -47,30 +47,30 @@ Defines how long a key must be pressed to trigger Hold behavior.
 
 #### `quick-tap-ms`
 
-If you press a tapped hold-tap again within `quick-tap-ms` milliseconds, it will always trigger the tap behavior. This is useful for things like a backspace, where a quick tap+hold holds backspace pressed. Set this to a negative value to disable. The default is -1 (disabled).
+If you press a tapped hold-tap again within `quick-tap-ms` milliseconds of the first press, it will always trigger the tap behavior. This is useful for things like a backspace, where a quick tap+hold holds backspace pressed. Set this to a negative value to disable. The default is -1 (disabled).
 
-#### `global-quick-tap`
+#### `require-prior-idle-ms`
 
-If `global-quick-tap` is enabled, then `quick-tap-ms` will apply not only when the given hold-tap is tapped, but for any key tapped before it. This effectively disables the hold-tap when typing quickly, which can be quite useful for homerow mods. It can also have the effect of removing the input delay when typing quickly.
+`require-prior-idle-ms` is like `quick-tap-ms` however it will apply for _any_ non-modifier key pressed before it. This effectively disables the hold-tap when typing quickly, which can be quite useful for homerow mods. It can also have the effect of removing the input delay when typing quickly.
 
-For example, the following hold-tap configuration enables `global-quick-tap` with a 125 millisecond `quick-tap-ms` term.
+For example, the following hold-tap configuration enables `require-prior-idle-ms` with a 125 millisecond term, alongside `quick-tap-ms` with a 200 millisecond term.
 
 ```
-gqt: global-quick-tap {
+rpi: require_prior_idle {
     compatible = "zmk,behavior-hold-tap";
-    label = "GLOBAL_QUICK_TAP";
+    label = "REQUIRE_PRIOR_IDLE";
     #binding-cells = <2>;
     flavor = "tap-preferred";
     tapping-term-ms = <200>;
-    quick-tap-ms = <125>;
-    global-quick-tap;
+    quick-tap-ms = <200>;
+    require-prior-idle-ms = <125>;
     bindings = <&kp>, <&kp>;
 };
 ```
 
-If you press `&kp A` and then `&gqt LEFT_SHIFT B` **within** 125 ms, then `ab` will be output. Importantly, `b` will be output immediately since it was within the `quick-tap-ms`. This quick-tap behavior will work for any key press, whether it is within a behavior like hold-tap, or a simple `&kp`. This means the `&gqt LEFT_SHIFT B` binding will only have its underlying hold-tap behavior if it is pressed 125 ms **after** a key press.
+If you press `&kp A` and then `&rpi LEFT_SHIFT B` **within** 125 ms, then `ab` will be output. Importantly, `b` will be output immediately since it was within the `require-prior-idle-ms`, without waiting for a timeout or an interrupting key. In other words, the `&rpi LEFT_SHIFT B` binding will only have its underlying hold-tap behavior if it is pressed 125 ms **after** the previous key press; otherwise it will act like `&kp B`.
 
-Note that the greater the value of `quick-tap-ms` is, the harder it will be to invoke the hold behavior, making this feature less applicable for use-cases like capitalizing letters while typing normally. However, if the hold behavior isn't used during fast typing, then it can be an effective way to mitigate misfires.
+Note that the greater the value of `require-prior-idle-ms` is, the harder it will be to invoke the hold behavior, making this feature less applicable for use-cases like capitalizing letters while typing normally. However, if the hold behavior isn't used during fast typing, then it can be an effective way to mitigate misfires.
 
 #### `retro-tap`
 

@@ -4,15 +4,15 @@
 
 / {
     behaviors {
-        tp: behavior_tap_preferred {
+        ht_bal: behavior_balanced {
             compatible = "zmk,behavior-hold-tap";
             label = "MOD_TAP";
             #binding-cells = <2>;
-            flavor = "tap-preferred";
+            flavor = "balanced";
             tapping-term-ms = <300>;
             quick-tap-ms = <300>;
+            require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            global-quick-tap;
         };
     };
 
@@ -22,7 +22,7 @@
 
         default_layer {
             bindings = <
-                &tp LEFT_SHIFT F &tp LEFT_CONTROL C
+                &ht_bal LEFT_SHIFT F &ht_bal LEFT_CONTROL C
                 &kp D &none>;
         };
     };
