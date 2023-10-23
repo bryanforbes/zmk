@@ -1,13 +1,13 @@
-# Zephyr™ Mechanical Keyboard (ZMK) Firmware
+# Glove80 ZMK Firmware: Personal fork
 
-[![Discord](https://img.shields.io/discord/719497620560543766)](https://zmk.dev/community/discord/invite)
-[![Build](https://github.com/zmkfirmware/zmk/workflows/Build/badge.svg)](https://github.com/zmkfirmware/zmk/actions)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+This is my personal Glove80 ZMK fork containing various experimental features. I try to rebase it regularly
+onto Moergo's latest upstream. Below is the list of features currently included in the `bryanforbes` branch
+_on top of_ Moergo's ZMK fork:
 
-[ZMK Firmware](https://zmk.dev/) is an open source ([MIT](LICENSE)) keyboard firmware built on the [Zephyr™ Project](https://www.zephyrproject.org/) Real Time Operating System (RTOS). ZMK's goal is to provide a modern, wireless, and powerful firmware free of licensing issues.
+- **Zephyr 3.2** (PR [#21](https://github.com/moergo-sc/zmk/pull/21)) - official Moergo PR to update their fork to Zephyr 3.2
+- **mouse** (PR [#778](https://github.com/zmkfirmware/zmk/pull/778)) - official PR + ftc's changes + [fixes needed for Zephyr 3.2](https://github.com/urob/zmk/tree/mouse-3.2) + safeguards + always use hog device + modifications for Glove80 + [split x/y acceleration](https://github.com/caksoylar/zmk/commit/18b77a3516336807f913b2b2b0e38988c62ca7ce)
+- **swapper** (PR [#1366](https://github.com/zmkfirmware/zmk/pull/1366)) - official PR
+- **caps-word** (PR [#1742](https://github.com/zmkfirmware/zmk/pull/1742) - official PR
+- **on-release-for-tap-preferred** - [on-release feature for tap-preferred](https://github.com/celejewski/zmk/commit/d7a8482712d87963e59b74238667346221199293) by Andrezej (cherry-picked from [urob's](https://github.com/urob/zmk) fork)
 
-Check out the website to learn more: https://zmk.dev/.
-
-You can also come join our [ZMK Discord Server](https://zmk.dev/community/discord/invite).
-
-To review features, check out the [feature overview](https://zmk.dev/docs/). ZMK is under active development, and new features are listed with the [enhancement label](https://github.com/zmkfirmware/zmk/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) in GitHub. Please feel free to add 👍 to the issue description of any requests to upvote the feature.
+See my [Glove80 ZMK config](https://github.com/bryanforbes/glove80-zmk-config/) repo to see how I build firmware images for the Glove80.
