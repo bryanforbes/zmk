@@ -11,5 +11,24 @@ properties:
   continue-list:
     type: array
     required: true
+    description: |
+      List of key codes which should continue the caps word behavior.
+      (Alphanumeric keys are included automatically.)
+  shift-list:
+    type: array
+    description: |
+      List of key codes which should have modifiers applied when caps word is active.
+      (Alpha keys are included automatically.)
   mods:
     type: int
+    description: Bitmask of modifiers to apply. Default is MOD_LSFT.
+  idle-timeout-ms:
+    type: int
+    default: 5000
+    description: |
+      Caps word turns off if no keys are pressed for this duration.
+      Set to 0 for caps word to remain active until a word breaking key is pressed
+      or caps word is toggled back off.
+  no-default-keys:
+    type: boolean
+    description: Do not automatically include alphanumeric keys in continue-list and shift-list.
