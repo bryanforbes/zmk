@@ -11,38 +11,26 @@
 #include <zmk/keys.h>
 
 struct zmk_keycode_state_changed {
-    uint16_t usage_page;
-    uint32_t keycode;
-    uint8_t implicit_modifiers;
-    uint8_t explicit_modifiers;
-    bool state;
     int64_t timestamp;
+    zmk_key_t keycode;
+    uint16_t usage_page;
+    zmk_mod_flags_t implicit_modifiers;
+    zmk_mod_flags_t explicit_modifiers;
+    bool state;
 };
 
 ZMK_EVENT_DECLARE(zmk_keycode_state_changed);
 
 static inline struct zmk_keycode_state_changed_event *
 zmk_keycode_state_changed_from_encoded(uint32_t encoded, bool pressed, int64_t timestamp) {
-    uint16_t page = ZMK_HID_USAGE_PAGE(encoded);
-    uint16_t id = ZMK_HID_USAGE_ID(encoded);
-    uint8_t implicit_modifiers = 0x00;
-    uint8_t explicit_modifiers = 0x00;
-
-    if (!page) {
-        page = HID_USAGE_KEY;
-    }
-
-    if (is_mod(page, id)) {
-        explicit_modifiers = SELECT_MODS(encoded);
-    } else {
-        implicit_modifiers = SELECT_MODS(encoded);
-    }
+    const struct zmk_key_param key = ZMK_KEY_DECODE_PARAM(encoded);
+    const bool is_explicit = is_mod(key.page, key.id);
 
     return new_zmk_keycode_state_changed(
-        (struct zmk_keycode_state_changed){.usage_page = page,
-                                           .keycode = id,
-                                           .implicit_modifiers = implicit_modifiers,
-                                           .explicit_modifiers = explicit_modifiers,
+        (struct zmk_keycode_state_changed){.usage_page = key.page,
+                                           .keycode = key.id,
+                                           .implicit_modifiers = is_explicit ? 0 : key.modifiers,
+                                           .explicit_modifiers = is_explicit ? key.modifiers : 0,
                                            .state = pressed,
                                            .timestamp = timestamp});
 }
