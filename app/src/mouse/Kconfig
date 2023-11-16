@@ -7,7 +7,7 @@ config ZMK_MOUSE
 
 config ZMK_MOUSE_TICK_DURATION
     int "Mouse tick duration in ms"
-    default 8
+    default 16
 
 if ZMK_MOUSE
 
