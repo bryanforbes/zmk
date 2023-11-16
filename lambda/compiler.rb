@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require 'tmpdir'
-require 'json'
 require 'base64'
+require 'json'
+require 'open3'
+require 'yaml'
 
 class Compiler
   class CompileError < RuntimeError
@@ -33,6 +35,7 @@ class Compiler
       compile_command = ['compileZmk', '-b', board]
 
       if keymap_data
+        validate_devicetree!(keymap_data)
         File.open('build.keymap', 'w') { |io| io.write(keymap_data) }
         compile_command << '-k' << './build.keymap'
       end
@@ -67,6 +70,36 @@ class Compiler
       result = File.read('zmk.uf2')
 
       [result, compile_output]
+    end
+  end
+
+  PERMITTED_DTS_SECTIONS = %w[
+    behaviors macros combos conditional_layers keymap underglow-indicators
+  ].freeze
+
+  def validate_devicetree!(dtsi)
+    dts = "/dts-v1/;\n" + dtsi
+
+    stdout, stderr, status =
+      Open3.capture3({}, 'dts2yml', unsetenv_others: true, stdin_data: dts)
+
+    unless status.success?
+      raise CompileError.new('Syntax error checking device-tree input', log: stderr.split("\n"))
+    end
+
+    data =
+      begin
+        YAML.safe_load(stdout)
+      rescue Psych::Exception => e
+        raise CompileError.new('Error parsing translated device-tree', status: 500, log: [e.message])
+      end
+
+    sections = data.flat_map(&:keys)
+    invalid_sections = sections - PERMITTED_DTS_SECTIONS
+
+    unless invalid_sections.empty?
+      raise CompileError.new(
+              "Device-tree included the non-permitted root sections: #{invalid_sections.inspect}", log: [])
     end
   end
 

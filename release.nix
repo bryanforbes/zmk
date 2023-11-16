@@ -44,6 +44,17 @@ let
     includes = zmk.buildInputs ++ zmk.nativeBuildInputs ++ zmk.zephyrModuleDeps;
   };
 
+  dts2yml = pkgs.writeShellScriptBin "dts2yml" ''
+    set -eo pipefail
+
+    ${pkgs.gcc-arm-embedded}/bin/arm-none-eabi-cpp -P -D__DTS__ -E -nostdinc \
+      -I "${zmk.src}/app/dts" -I "${zmk.src}/app/include" \
+      -I "${zephyr}/zephyr/dts" -I "${zephyr}/zephyr/dts/common" -I "${zephyr}/zephyr/dts/arm" \
+      -I "${zephyr}/zephyr/include" -I "${zephyr}/zephyr/include/zephyr"\
+      -undef -x assembler-with-cpp - |\
+    ${pkgs.dtc}/bin/dtc -I dts -O yaml
+  '';
+
   zmkCompileScript = let
     zmk' = zmk.override {
       gcc-arm-embedded = ccacheWrapper.override {
@@ -161,7 +172,7 @@ let
 
   startLambda = pkgs.writeShellScriptBin "startLambda" ''
     set -euo pipefail
-    export PATH=${lib.makeBinPath [ zmkCompileScript ]}:$PATH
+    export PATH=${lib.makeBinPath [ zmkCompileScript dts2yml ]}:$PATH
     cd ${lambda.source}
     ${lambda.bundleEnv}/bin/bundle exec aws_lambda_ric "app.LambdaFunction::Handler.process"
   '';
@@ -189,7 +200,7 @@ let
     };
   };
 in {
-  inherit lambdaImage zmkCompileScript ccacheCache;
+  inherit lambdaImage zmkCompileScript dts2yml ccacheCache;
   directLambdaImage = lambdaImage;
 
   # nix shell -f release.nix simulateLambda -c simulateLambda
