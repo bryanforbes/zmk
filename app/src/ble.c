@@ -62,9 +62,9 @@ enum advertising_type {
 static struct zmk_ble_profile profiles[ZMK_BLE_PROFILE_COUNT];
 static uint8_t active_profile;
 
-#if IS_ENABLED(CONFIG_BT_DEVICE_NAME_APPEND_SN)
+#if IS_ENABLED(CONFIG_ZMK_BLE_DEVICE_NAME_APPEND_SN)
 
-static char bt_device_name[sizeof(CONFIG_BT_DEVICE_NAME) + CONFIG_BT_DEVICE_NAME_SN_BYTES];
+static char bt_device_name[sizeof(CONFIG_BT_DEVICE_NAME) + CONFIG_ZMK_BLE_DEVICE_NAME_SN_CHARS + 1];
 
 void fill_serial_number(char *buf, int length);
 
@@ -72,8 +72,9 @@ void fill_serial_number(char *buf, int length);
 // CONFIG_BT_DEVICE_NAME
 void init_bt_device_name() {
     strncpy(bt_device_name, CONFIG_BT_DEVICE_NAME, sizeof(bt_device_name));
-    fill_serial_number(bt_device_name + sizeof(CONFIG_BT_DEVICE_NAME) - 1,
-                       CONFIG_BT_DEVICE_NAME_SN_BYTES);
+    bt_device_name[sizeof(CONFIG_BT_DEVICE_NAME) - 1] = ' ';
+    fill_serial_number(&bt_device_name[sizeof(CONFIG_BT_DEVICE_NAME)],
+                       CONFIG_ZMK_BLE_DEVICE_NAME_SN_CHARS);
     bt_device_name[sizeof(bt_device_name) - 1] = '\0';
 }
 
@@ -648,7 +649,7 @@ static void zmk_ble_ready(int err) {
 }
 
 static int zmk_ble_init(const struct device *_arg) {
-#if IS_ENABLED(CONFIG_BT_DEVICE_NAME_APPEND_SN)
+#if IS_ENABLED(CONFIG_ZMK_BLE_DEVICE_NAME_APPEND_SN)
     init_bt_device_name();
 #endif
 
@@ -674,7 +675,7 @@ static int zmk_ble_init(const struct device *_arg) {
     settings_load_subtree("bt");
 #endif
 
-#if IS_ENABLED(CONFIG_BT_DEVICE_NAME_APPEND_SN)
+#if IS_ENABLED(CONFIG_ZMK_BLE_DEVICE_NAME_APPEND_SN)
     if (strcmp(bt_get_name(), bt_device_name) != 0) {
         bt_set_name(bt_device_name);
     }
