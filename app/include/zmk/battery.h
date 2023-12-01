@@ -7,3 +7,7 @@
 #pragma once
 
 uint8_t zmk_battery_state_of_charge();
+
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
+uint8_t zmk_battery_state_of_peripheral_charge(uint8_t peripheral);
+#endif /* IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY) */

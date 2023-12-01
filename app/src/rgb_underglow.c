@@ -19,10 +19,6 @@
 #include <zmk/hid_indicators.h>
 #include <zmk/usb.h>
 
-#if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-#include <zmk/battery_split.h>
-#endif
-
 #include <zephyr/logging/log.h>
 
 #include <zephyr/drivers/led_strip.h>
@@ -297,12 +293,12 @@ static int zmk_led_generate_status() {
     zmk_led_battery_level(zmk_battery_state_of_charge(), underglow_bat_lhs,
                           DT_PROP_LEN(UNDERGLOW_INDICATORS, bat_lhs));
 
-#if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-    zmk_led_battery_level(zmk_battery_state_of_peripheral_charge(), underglow_bat_rhs,
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
+    zmk_led_battery_level(zmk_battery_state_of_peripheral_charge(0), underglow_bat_rhs,
                           DT_PROP_LEN(UNDERGLOW_INDICATORS, bat_rhs));
 
     // CAPSLOCK/NUMLOCK/SCROLLOCK STATUS
-    zmk_hid_indicators led_flags = zmk_hid_indicators_get_current_profile();
+    zmk_hid_indicators_t led_flags = zmk_hid_indicators_get_current_profile();
 
     if (led_flags & ZMK_LED_CAPSLOCK_BIT)
         status_pixels[DT_PROP(UNDERGLOW_INDICATORS, capslock)] = red;

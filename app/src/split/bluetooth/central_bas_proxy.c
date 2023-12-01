@@ -22,6 +22,10 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 // Initialize the charge level to a special value indicating no sampling has been made yet.
 static uint8_t last_state_of_peripheral_charge[CONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS] = {0};
 
+uint8_t zmk_battery_state_of_peripheral_charge(uint8_t peripheral) {
+    return last_state_of_peripheral_charge[peripheral];
+}
+
 static void blvl_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value) {
     ARG_UNUSED(attr);
 
