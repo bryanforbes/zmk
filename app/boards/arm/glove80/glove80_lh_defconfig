@@ -87,6 +87,13 @@ CONFIG_ZMK_HID_CONSUMER_REPORT_USAGES_BASIC=y
 # Enable USB boot protocol support
 CONFIG_ZMK_USB_BOOT=y
 
+# Enable split battery reporting
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY=y
+
+# Enable HID indicator reporting from host
+CONFIG_ZMK_HID_INDICATORS=y
+
 # Turn on debugging to disable optimization. Debug messages can result in larger
 # stacks, so enable stack protection and particularly a larger BLE peripheral stack.
 # CONFIG_DEBUG=y
