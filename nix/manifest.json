@@ -2,10 +2,10 @@
   {
     "clone-depth": 1,
     "name": "zephyr",
-    "revision": "ed4a9549efc6fe6e4ab15ae19d32a9405b54f4bb",
+    "revision": "1ae0eb5ce8adafcec993e6fb8f4eeb6f818a7772",
     "url": "https://github.com/zmkfirmware/zephyr",
     "west-commands": "scripts/west-commands.yml",
-    "sha256": "14np1cx6rpaxmpnclaqsn8jcdb74jmhx0c231d2vs47crg59pyr1"
+    "sha256": "184wg98wqa6l8xxsk72rcp91prm49h7lna7w6zfmdflv58nmyrla"
   },
   {
     "name": "canopennode",
