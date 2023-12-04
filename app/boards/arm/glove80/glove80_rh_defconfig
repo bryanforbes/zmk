@@ -23,9 +23,6 @@ CONFIG_BT_DIS_MODEL="Glove80 Right"
 
 CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
 
-# Workaround for recent Linux kernel compatibility issues
-CONFIG_BT_CTLR_PHY_2M=n
-
 # Enable MPU
 CONFIG_ARM_MPU=y
 
