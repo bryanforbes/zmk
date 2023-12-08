@@ -32,7 +32,6 @@
 
         magic: magic_hold_tap {
             compatible = "zmk,behavior-hold-tap";
-            label = "MAGIC_HOLD_TAP";
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
@@ -42,7 +41,6 @@
 
     macros {
         rgb_ug_status_macro: rgb_ug_status_macro_0 {
-            label = "RGB_UG_STATUS";
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings
