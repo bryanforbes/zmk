@@ -24,6 +24,12 @@ makeScope newScope (self: with self; {
   ''
     mkdir -p $out
     cat ${a}/zmk.uf2 ${b}/zmk.uf2 > $out/glove80.uf2
+    [[ -e ${a}/.config ]] && cp ${a}/.config $out/${a.name}.config
+    [[ -e ${a}/zephyr.dts ]] && cp ${a}/zephyr.dts $out/${a.name}.zephyr.dts
+    [[ -e ${a}/zephyr.dts.pre ]] && cp ${a}/zephyr.dts.pre $out/${a.name}.zephyr.dts.pre
+    [[ -e ${b}/.config ]] && cp ${b}/.config $out/${b.name}.config
+    [[ -e ${b}/zephyr.dts ]] && cp ${b}/zephyr.dts $out/${b.name}.zephyr.dts
+    [[ -e ${b}/zephyr.dts.pre ]] && cp ${b}/zephyr.dts.pre $out/${b.name}.zephyr.dts.pre
   '';
 
   zephyr = callPackage ./nix/zephyr.nix { };
