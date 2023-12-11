@@ -22,6 +22,10 @@ makeScope newScope (self: with self; {
     ''
       mkdir -p $out
       cat ${a}/zmk.uf2 ${b}/zmk.uf2 > $out/${name}.uf2
+      [[ -e ${a}/zmk.kconfig ]] && cp ${a}/zmk.kconfig $out/${a.name}.kconfig
+      [[ -e ${a}/zmk.dts ]] && cp ${a}/zmk.dts $out/${a.name}.dts
+      [[ -e ${b}/zmk.kconfig ]] && cp ${b}/zmk.kconfig $out/${b.name}.kconfig
+      [[ -e ${b}/zmk.dts ]] && cp ${b}/zmk.dts $out/${b.name}.dts
     '';
   in (combine "glove80") // { __functor = self: name: combine name; };
 
