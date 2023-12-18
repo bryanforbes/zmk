@@ -23,7 +23,13 @@ CONFIG_BT_DIS_PNP_VID=0x16c0
 CONFIG_BT_DIS_MANUF="MoErgo"
 CONFIG_BT_DIS_MODEL="Glove80"
 
+### Bluetooth configuration workarounds
+
+# Use higher radio transmit power
 CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+
+# Use experimental connection settings
+CONFIG_ZMK_BLE_EXPERIMENTAL_CONN=y
 
 # Work-around for Windows bug with battery notifications
 CONFIG_BT_GATT_ENFORCE_SUBSCRIPTION=n
