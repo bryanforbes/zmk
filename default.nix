@@ -5,20 +5,15 @@ let
 in
 
 makeScope newScope (self: with self; {
-  # From scratch:
-  #  nix run -f . west -c west init -l app
-  #  nix run -f . west -c west update
-  #  nix run -f . update-manifest -c update-manifest > nix/manifest.json
+  # To update the pinned Zephyr dependecies using west and update-manifest:
+  #  nix shell -f . west -c west init -l app
+  #  nix shell -f . west -c west update
+  #  nix shell -f . update-manifest -c update-manifest > nix/manifest.json
+  # Note that any `group-filter` groups in west.yml need to be temporarily
+  # removed, as `west update-manifest` requires all dependencies to be fetched.
   update-manifest = callPackage ./nix/update-manifest { };
 
-  west = pkgs.python3Packages.west.overridePythonAttrs (old: rec {
-    inherit (old) pname;
-    version = "0.9.0";
-    src = pkgs.python3Packages.fetchPypi {
-      inherit pname version;
-      sha256 = "1asgw3v3k77lvh4i1c3s0gncy2dn658py6256bzpjp1k35gs8mbg";
-    };
-  });
+  west = pkgs.python3Packages.west;
 
   combine_uf2 = a: b: pkgs.runCommandNoCC "combined_${a.name}_${b.name}" {}
   ''

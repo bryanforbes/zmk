@@ -1,22 +1,6 @@
 { pkgs ? (import ./pinned-nixpkgs.nix {}) }:
 
 let
-  # need a newer west than nixpkgs packages
-  pythonOverrides = self: super: {
-    west = super.west.overridePythonAttrs(old: rec {
-      inherit (old) pname;
-      version = "0.9.0";
-      src = super.fetchPypi {
-        inherit pname version;
-        sha256 = "1asgw3v3k77lvh4i1c3s0gncy2dn658py6256bzpjp1k35gs8mbg";
-      };
-    });
-  };
-
-  python = pkgs.python3.override {
-    packageOverrides = pythonOverrides;
-  };
-
   # from zephyr/scripts/requirements-base.txt
   pythonDependencies = ps: with ps; [
     pyelftools
@@ -53,7 +37,7 @@ requiredStdenv.mkDerivation {
     ninja
     cmake
     xz
-    (python.withPackages(pythonDependencies))
+    (python3.withPackages(pythonDependencies))
 
     # ARM toolchain
     gcc-arm-embedded
