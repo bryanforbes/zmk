@@ -21,7 +21,21 @@ CONFIG_BT_DIS_PNP_VID=0x16c0
 CONFIG_BT_DIS_MANUF="MoErgo"
 CONFIG_BT_DIS_MODEL="Glove80 Right"
 
+### Bluetooth configuration workarounds
+
+# Use higher radio transmit power
 CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+
+# Use non-legacy LLCP (required for compatibility with recent Linux kernel)
+CONFIG_BT_LL_SW_LLCP=y
+CONFIG_BT_LL_SW_LLCP_LEGACY=n
+
+# Disable 2M PHY (required for compatibility with recent Intel chipset drivers
+# on Windows)
+CONFIG_BT_CTLR_PHY_2M=n
+
+# Automatically re-establish security on reconnection
+CONFIG_BT_GATT_AUTO_SEC_REQ=y
 
 # Enable MPU
 CONFIG_ARM_MPU=y
