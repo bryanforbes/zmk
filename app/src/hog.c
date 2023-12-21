@@ -367,29 +367,26 @@ void send_mouse_report_callback(struct k_work *work) {
     }
 };
 
+K_WORK_DEFINE(hog_mouse_work, send_mouse_report_callback);
+
 int zmk_hog_send_mouse_report(struct zmk_hid_mouse_report_body *report) {
-    struct bt_conn *conn = destination_connection();
-    if (conn == NULL) {
-        return 1;
-    }
-
-    struct bt_gatt_notify_params notify_params = {
-        .attr = &hog_svc.attrs[13],
-        .data = report,
-        .len = sizeof(*report),
-    };
-
-    int err = bt_gatt_notify_cb(conn, &notify_params);
+    int err = k_msgq_put(&zmk_hog_mouse_msgq, report, K_NO_WAIT);
     if (err) {
-        LOG_DBG("Error notifying %d", err);
-        return err;
+        switch (err) {
+        case -EAGAIN: {
+            LOG_WRN("Mouse message queue full, dropping report");
+            return err;
+        }
+        default:
+            LOG_WRN("Failed to queue mouse report to send (%d)", err);
+            return err;
+        }
     }
 
-    bt_conn_unref(conn);
+    k_work_submit_to_queue(&hog_work_q, &hog_mouse_work);
 
     return 0;
 };
-
 #endif // IS_ENABLED(CONFIG_ZMK_MOUSE)
 
 int zmk_hog_init(const struct device *_arg) {
