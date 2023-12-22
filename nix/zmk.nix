@@ -7,6 +7,7 @@
 , kconfig ? null
 , extraModules ? []
 , snippets ? []
+, fwversion ? null
 }:
 
 
@@ -100,7 +101,9 @@ stdenvNoCC.mkDerivation {
   (lib.optional (keymap != null) "-DKEYMAP_FILE=${keymap}") ++
   (lib.optional (kconfig != null) "-DEXTRA_CONF_FILE=${kconfig}") ++
   (lib.optional (extraModules != []) "-DZMK_EXTRA_MODULES=${lib.concatStringsSep ";" extraModules}") ++
-  (lib.optional (snippets != []) "-DSNIPPET=${lib.concatStringsSep ";" snippets}");
+  (lib.optional (snippets != []) "-DSNIPPET=${lib.concatStringsSep ";" snippets}") ++
+  (lib.optional (fwversion != null) "-DCONFIG_BT_DIS_FW_REV=y") ++
+  (lib.optional (fwversion != null) "-DCONFIG_BT_DIS_FW_REV_STR='\"${fwversion}\"'");
 
   nativeBuildInputs = [ cmake ninja python dtc gcc-arm-embedded ];
   buildInputs = [ zephyr ];
