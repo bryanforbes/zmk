@@ -102,6 +102,8 @@ stdenvNoCC.mkDerivation {
   installPhase = ''
     mkdir $out
     cp zephyr/zmk.{uf2,hex,bin,elf} $out
+    cp zephyr/.config $out/zmk.kconfig
+    cp zephyr/zephyr.dts $out/zmk.dts
   '';
 
   passthru = { inherit zephyrModuleDeps; };
