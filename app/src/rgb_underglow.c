@@ -290,7 +290,7 @@ const struct led_rgb magenta = HEXRGB(0xff, 0x00, 0xff);
 const struct led_rgb white = HEXRGB(0xff, 0xff, 0xff);
 const struct led_rgb lilac = HEXRGB(0x6b, 0x1f, 0xce);
 
-void zmk_led_battery_level(int bat_level, const uint8_t *addresses, int addresses_len) {
+static void zmk_led_battery_level(int bat_level, const uint8_t *addresses, size_t addresses_len) {
     struct led_rgb bat_colour;
 
     if (bat_level > 40) {
@@ -311,6 +311,12 @@ void zmk_led_battery_level(int bat_level, const uint8_t *addresses, int addresse
     }
 }
 
+static void zmk_led_fill(struct led_rgb color, const uint8_t *addresses, size_t addresses_len) {
+    for (int i = 0; i < addresses_len; i++) {
+        status_pixels[addresses[i]] = color;
+    }
+}
+
 #define ZMK_LED_NUMLOCK_BIT BIT(0)
 #define ZMK_LED_CAPSLOCK_BIT BIT(1)
 #define ZMK_LED_SCROLLLOCK_BIT BIT(2)
@@ -320,12 +326,23 @@ static int zmk_led_generate_status() {
         status_pixels[i] = (struct led_rgb){r : 0, g : 0, b : 0};
     }
 
+    // BATTERY STATUS
     zmk_led_battery_level(zmk_battery_state_of_charge(), underglow_bat_lhs,
                           DT_PROP_LEN(UNDERGLOW_INDICATORS, bat_lhs));
 
-#if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-    zmk_led_battery_level(zmk_battery_state_of_peripheral_charge(), underglow_bat_rhs,
-                          DT_PROP_LEN(UNDERGLOW_INDICATORS, bat_rhs));
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
+    uint8_t peripheral_level = 0;
+    int rc = zmk_split_get_peripheral_battery_level(0, &peripheral_level);
+
+    if (rc == 0) {
+        zmk_led_battery_level(peripheral_level, underglow_bat_rhs,
+                              DT_PROP_LEN(UNDERGLOW_INDICATORS, bat_rhs));
+    } else if (rc == -ENOTCONN) {
+        zmk_led_fill(red, underglow_bat_rhs, DT_PROP_LEN(UNDERGLOW_INDICATORS, bat_rhs));
+    } else if (rc == -EINVAL) {
+        LOG_ERR("Invalid peripheral index requested for battery level read: 0");
+    }
+#endif
 
     // CAPSLOCK/NUMLOCK/SCROLLOCK STATUS
     zmk_hid_indicators_t led_flags = zmk_hid_indicators_get_current_profile();
@@ -376,7 +393,6 @@ static int zmk_led_generate_status() {
     } else if (usb_state == ZMK_USB_CONN_NONE) { // disconnected
         status_pixels[DT_PROP(UNDERGLOW_INDICATORS, usb_state)] = lilac;
     }
-#endif
 
     int16_t blend = 256;
     if (state.status_animation_step < (500 / 25)) {
