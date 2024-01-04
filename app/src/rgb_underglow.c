@@ -19,10 +19,6 @@
 #include <zmk/hid_indicators.h>
 #include <zmk/usb.h>
 
-#if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-#include <zmk/battery_split.h>
-#endif
-
 #include <zephyr/logging/log.h>
 
 #include <zephyr/drivers/led_strip.h>
