@@ -36,9 +36,6 @@ CONFIG_BT_LL_SW_LLCP_LEGACY=n
 # on Windows)
 CONFIG_BT_CTLR_PHY_2M=n
 
-# Automatically re-establish security on reconnection
-CONFIG_BT_GATT_AUTO_SEC_REQ=y
-
 # Work-around for Windows bug with battery notifications
 CONFIG_BT_GATT_ENFORCE_SUBSCRIPTION=n
 
