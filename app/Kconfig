@@ -153,6 +153,9 @@ menuconfig ZMK_BLE
 
 if ZMK_BLE
 
+config ZMK_BLE_BAS
+    bool "ZMK BAS service"
+
 config ZMK_BLE_EXPERIMENTAL_CONN
     bool "Experimental BLE connection changes"
     help
@@ -385,7 +388,7 @@ config ZMK_BATTERY_REPORTING
     default n
     select SENSOR
     select ZMK_LOW_PRIORITY_WORK_QUEUE
-    imply BT_BAS if ZMK_BLE
+    imply BT_BAS if ZMK_BLE && !ZMK_BLE_BAS
 
 config ZMK_IDLE_TIMEOUT
     int "Milliseconds of inactivity before entering idle state (OLED shutoff, etc)"

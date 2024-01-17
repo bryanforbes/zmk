@@ -9,7 +9,12 @@
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/sensor.h>
+#if IS_ENABLED(CONFIG_BT_BAS)
 #include <zephyr/bluetooth/services/bas.h>
+#endif
+#if IS_ENABLED(CONFIG_ZMK_BLE_BAS)
+#include <zmk/bas.h>
+#endif
 
 #include <zephyr/logging/log.h>
 
@@ -60,6 +65,16 @@ static int zmk_battery_update(const struct device *battery) {
 
         if (rc != 0) {
             LOG_WRN("Failed to set BAS GATT battery level (err %d)", rc);
+            return rc;
+        }
+#endif
+#if IS_ENABLED(CONFIG_ZMK_BLE_BAS)
+        LOG_DBG("Setting ZMK BAS GATT battery level to %d.", last_state_of_charge);
+
+        rc = zmk_bas_set_battery_level(last_state_of_charge);
+
+        if (rc != 0) {
+            LOG_WRN("Failed to set ZMK BAS GATT battery level (err %d)", rc);
             return rc;
         }
 #endif
