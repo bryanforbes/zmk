@@ -10,6 +10,10 @@
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/uuid.h>
 
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
+
 #include <zmk/bas.h>
 
 enum {
@@ -57,11 +61,19 @@ static ssize_t read_battery_level_status(struct bt_conn *conn, const struct bt_g
     return bt_gatt_attr_read(conn, attr, buf, len, offset, &value, sizeof(value));
 }
 
+static void batery_level_status_ccc_changed(const struct bt_gatt_attr *_attr, uint16_t value) {
+    bool notif_enabled = (value == BT_GATT_CCC_NOTIFY);
+
+    LOG_INF("ZMK BAS Notifications %s", notif_enabled ? "enabled" : "disabled");
+}
+
 BT_GATT_SERVICE_DEFINE(bas, BT_GATT_PRIMARY_SERVICE(BT_UUID_BAS),
                        BT_GATT_CHARACTERISTIC(BT_UUID_BAS_BATTERY_LEVEL_STATUS,
                                               BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
                                               BT_GATT_PERM_READ, read_battery_level_status, NULL,
-                                              &battery_level_status));
+                                              &battery_level_status),
+                       BT_GATT_CCC(batery_level_status_ccc_changed,
+                                   BT_GATT_PERM_READ | BT_GATT_PERM_WRITE));
 
 static int zmk_bas_init(void) { return 0; }
 
