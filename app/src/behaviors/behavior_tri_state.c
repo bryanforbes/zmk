@@ -130,7 +130,7 @@ static bool is_layer_ignored(struct active_tri_state *tri_state, int32_t layer) 
 
 static int on_tri_state_binding_pressed(struct zmk_behavior_binding *binding,
                                         struct zmk_behavior_binding_event event) {
-    const struct device *dev = device_get_binding(binding->behavior_dev);
+    const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
     const struct behavior_tri_state_config *cfg = dev->config;
     struct active_tri_state *tri_state;
     tri_state = find_tri_state(event.position);
@@ -166,7 +166,7 @@ static void release_tri_state(struct zmk_behavior_binding_event event,
 
 static int on_tri_state_binding_released(struct zmk_behavior_binding *binding,
                                          struct zmk_behavior_binding_event event) {
-    const struct device *dev = device_get_binding(binding->behavior_dev);
+    const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
     const struct behavior_tri_state_config *cfg = dev->config;
     LOG_DBG("%d tri_state keybind released", event.position);
     release_tri_state(event, &cfg->behaviors[1]);
