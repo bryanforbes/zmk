@@ -1,8 +1,7 @@
 / {
     behaviors {
-        /omit-if-no-ref/ msc: behavior_mouse_scroll {
+        /omit-if-no-ref/ msc: mouse_scroll {
             compatible = "zmk,behavior-mouse-scroll";
-            label = "MOUSE_SCROLL";
             #binding-cells = <1>;
             delay-ms = <0>;
             time-to-max-speed-ms = <300>;
