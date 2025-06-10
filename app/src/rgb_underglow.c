@@ -33,7 +33,7 @@
 #include <zmk/workqueue.h>
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
-#include <zmk/split/bluetooth/central.h>
+#include <zmk/split/central.h>
 #endif
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -332,7 +332,7 @@ static int zmk_led_generate_status(void) {
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
     uint8_t peripheral_level = 0;
-    int rc = zmk_split_get_peripheral_battery_level(0, &peripheral_level);
+    int rc = zmk_split_central_get_peripheral_battery_level(0, &peripheral_level);
 
     if (rc == 0) {
         zmk_led_battery_level(peripheral_level, underglow_bat_rhs,
